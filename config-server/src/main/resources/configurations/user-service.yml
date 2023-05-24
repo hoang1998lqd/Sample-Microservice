@@ -3,6 +3,31 @@ server:
 spring:
   application:
     name: user-service
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 725132660627-5gcdfiv3kr86rqof4crg7qfnsmp3ec1k.apps.googleusercontent.com # ClientID và ClientSecret được từ console Google
+            clientSecret: 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
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+#          facebook:
+#            clientId: 121189305185277
+#            clientSecret: 42ffe5aa7379e8326387e0fe16f34132
+#            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+#            scope:
+#              - email
+#              - public_profile
+#          github:
+#            clientId: d3e47fc2ddd966fa4352
+#            clientSecret: 3bc0f6b8332f93076354c2a5bada2f5a05aea60d
+#            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+#            scope:
+#              - user:email
+#              - read:user
   datasource:
     url: jdbc:mysql://localhost:3306/userservice?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
     username: root
@@ -28,4 +53,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+app:
+  auth: #Encode base 64 hoặc sử dụng HMSC 256
+    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+    tokenExpirationMsec: 864000000 # 24 * 60 * 60 * 1000
+  regex:
+    regexPhone: ^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$
+    regexEmail: ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
+    regexDefault: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$

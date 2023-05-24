@@ -1,6 +1,6 @@
 package com.regalite.userservice.controller;
 
-import com.regalite.userservice.service.ProvinceClient;
+import com.regalite.userservice.service.client.ProvinceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
