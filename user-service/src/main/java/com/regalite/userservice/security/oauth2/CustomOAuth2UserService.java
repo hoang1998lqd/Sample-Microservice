@@ -1,10 +1,11 @@
 package com.regalite.userservice.security.oauth2;
 
 
+import com.regalite.userservice.domain.entity.Role;
 import com.regalite.userservice.domain.entity.User;
-import com.regalite.userservice.domain.enums.AuthProvider;
-import com.regalite.userservice.domain.model.SocialProvider;
+import com.regalite.userservice.domain.enums.SocialProvider;
 import com.regalite.userservice.exception.OAuth2AuthenticationProcessingException;
+import com.regalite.userservice.repository.RoleRepository;
 import com.regalite.userservice.repository.UserRepository;
 import com.regalite.userservice.security.jwt.UserPrinciple;
 import com.regalite.userservice.security.oauth2.model.OAuth2UserInfo;
@@ -19,7 +20,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author FISES-HoangVH15
@@ -29,6 +33,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -46,16 +52,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
-        if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+        if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
         Optional<User> userOptional = userRepository.findUserByEmail(oAuth2UserInfo.getEmail());
         User user;
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             user = userOptional.get();
 //            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
-            if(!user.getProvider().equals(SocialProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
+            if (!user.getProvider().equals(oAuth2UserRequest.getClientRegistration().getRegistrationId())) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         user.getProvider() + " account. Please use your " + user.getProvider() +
                         " account to login.");
@@ -69,14 +75,21 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        User user = new User();
-
+        final Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName(Role.ROLE_USER));
 //        user.setProvider(String.valueOf(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId())));
-        user.setProvider(SocialProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()).toString());
-        user.setDisplayName(oAuth2UserInfo.getName());
-        user.setEmail(oAuth2UserInfo.getEmail());
-        user.setAvatar(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(user);
+        return userRepository.save(User.builder()
+                .accountName(oAuth2UserInfo.getEmail())
+                .displayName(oAuth2UserInfo.getName())
+                .email(oAuth2UserInfo.getEmail())
+                .avatar(oAuth2UserInfo.getImageUrl())
+                .provider(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase())
+                .createdAt(LocalDateTime.now())
+                .validFlg((byte) 1)
+                .validFlg((byte) 1)
+                .roles(roles)
+                .build()
+        );
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {

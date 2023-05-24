@@ -21,14 +21,14 @@ import java.io.IOException;
 /**
  * @author FISES-HoangVH15
  */
-@RequiredArgsConstructor
+
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    //    @Autowired
-    private final TokenProvider tokenProvider;
+    @Autowired
+    private TokenProvider tokenProvider;
 
-//        @Autowired
-    private final CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 

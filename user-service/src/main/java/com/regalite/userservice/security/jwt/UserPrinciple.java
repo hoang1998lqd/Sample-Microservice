@@ -61,7 +61,7 @@ public class UserPrinciple implements OAuth2User, UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
@@ -101,6 +101,6 @@ public class UserPrinciple implements OAuth2User, UserDetails {
 
     @Override
     public String getName() {
-        return null;
+        return String.valueOf(id);
     }
 }

@@ -33,11 +33,11 @@ public class User implements Serializable {
     private String accountName;
     @Column(length = 100)
     private String displayName;
-    @Column(unique = true, length = 10, nullable = false)
+    @Column(unique = true, length = 10)
     private String phoneNumber;
     @Column(unique = true, nullable = false, length = 100)
     private String email;
-    @Column(length = 50)
+
     private String password;
     @Column(length = 2000)
     private String avatar;
@@ -52,7 +52,7 @@ public class User implements Serializable {
     private LocalDateTime updatedAt;
     private String updatedBy;
     private Date birthDay;
-    private Byte gender;
+    private Byte gender; // Nam: 1; Nữ : 0
     private String bio;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(

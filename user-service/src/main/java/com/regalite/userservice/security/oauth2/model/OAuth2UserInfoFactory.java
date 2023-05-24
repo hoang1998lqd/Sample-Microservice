@@ -2,7 +2,7 @@ package com.regalite.userservice.security.oauth2.model;
 
 
 
-import com.regalite.userservice.domain.model.SocialProvider;
+import com.regalite.userservice.domain.enums.SocialProvider;
 import com.regalite.userservice.exception.OAuth2AuthenticationProcessingException;
 
 import java.util.Map;

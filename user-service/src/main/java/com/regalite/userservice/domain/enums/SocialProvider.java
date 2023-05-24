@@ -1,4 +1,4 @@
-package com.regalite.userservice.domain.model;
+package com.regalite.userservice.domain.enums;
 
 /**
  * @author Chinna
@@ -6,7 +6,7 @@ package com.regalite.userservice.domain.model;
  */
 public enum SocialProvider {
 
-	FACEBOOK("facebook"), TWITTER("twitter"), LINKEDIN("linkedin"), GOOGLE("google"), GITHUB("github"), LOCAL("local");
+	FACEBOOK("facebook"), GOOGLE("google"), GITHUB("github"), LOCAL("local");
 
 	private String providerType;
 
