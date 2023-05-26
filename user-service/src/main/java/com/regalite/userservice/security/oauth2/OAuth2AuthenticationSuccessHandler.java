@@ -1,7 +1,7 @@
 package com.regalite.userservice.security.oauth2;
 
 
-import com.regalite.userservice.common.ValueConstants;
+import com.regalite.userservice.common.VariableConstants;
 import com.regalite.userservice.config.AppProperties;
 import com.regalite.userservice.security.jwt.TokenProvider;
 import com.regalite.userservice.utils.CookieUtils;
@@ -54,7 +54,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        Optional<String> redirectUri = CookieUtils.getCookie(request, ValueConstants.REDIRECT_URI_PARAM_COOKIE_NAME)
+        Optional<String> redirectUri = CookieUtils.getCookie(request, VariableConstants.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
         if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {

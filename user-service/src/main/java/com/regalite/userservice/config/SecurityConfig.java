@@ -1,6 +1,6 @@
 package com.regalite.userservice.config;
 
-import com.regalite.userservice.common.ValueConstants;
+import com.regalite.userservice.common.VariableConstants;
 import com.regalite.userservice.security.jwt.CustomUserDetailsService;
 import com.regalite.userservice.security.jwt.RestAuthenticationEntryPoint;
 import com.regalite.userservice.security.jwt.TokenAuthenticationFilter;
@@ -13,13 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -112,11 +109,11 @@ public class SecurityConfig {
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
-                .baseUri(ValueConstants.AUTHORIZATION_BASE_URL)
+                .baseUri(VariableConstants.AUTHORIZATION_BASE_URL)
                 .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
                 .and()
                 .redirectionEndpoint()
-                .baseUri(ValueConstants.CALLBACK_BASE_URL)
+                .baseUri(VariableConstants.CALLBACK_BASE_URL)
                 .and()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)

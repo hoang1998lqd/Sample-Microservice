@@ -1,5 +1,6 @@
 package com.regalite.userservice.utils;
 
+import com.regalite.userservice.common.VariableConstants;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,9 +14,9 @@ public class CookieUtils {
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
-        if (cookies != null && cookies.length > 0) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(name)) {
+                if (cookie.getName().equalsIgnoreCase(name)) {
                     return Optional.of(cookie);
                 }
             }
@@ -29,8 +30,21 @@ public class CookieUtils {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         response.addCookie(cookie);
+    }
+    public static void addCookieWithSecure(HttpServletResponse response, String name, String value, int maxAge, HttpServletRequest request) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+//        cookie.setDomain("localhost");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge);
+        cookie.setSecure(checkProtocol(request));
+        response.addCookie(cookie);
+    }
+    public static boolean checkProtocol(HttpServletRequest request){
+        String protocol = request.getScheme();
+        return protocol.equalsIgnoreCase(VariableConstants.PROTOCOL_HTTPS);
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

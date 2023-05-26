@@ -1,6 +1,7 @@
 package com.regalite.userservice.controller;
 
 import com.regalite.userservice.client.ProvinceClient;
+import com.regalite.userservice.common.VariableConstants;
 import com.regalite.userservice.domain.entity.Role;
 import com.regalite.userservice.domain.entity.User;
 import com.regalite.userservice.domain.enums.SocialProvider;
@@ -9,10 +10,15 @@ import com.regalite.userservice.repository.RoleRepository;
 import com.regalite.userservice.repository.UserRepository;
 import com.regalite.userservice.security.jwt.TokenProvider;
 import com.regalite.userservice.security.jwt.UserPrinciple;
+import com.regalite.userservice.utils.CookieUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,6 +51,7 @@ public class UserController {
     PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+
     @GetMapping
     public String publicData() {
         return "Dữ liệu được public";
@@ -55,20 +62,40 @@ public class UserController {
         return "Dữ liệu được Private";
     }
 
-    @PostMapping("/authen")
-    public ResponseEntity<?> authenticateUser(@RequestBody SignInRequest signInRequest) {
+    @PostMapping("/login")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> authenticateUser(@RequestBody SignInRequest signInRequest, HttpServletResponse response, HttpServletRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getLogin(), signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
+        CookieUtils.addCookieWithSecure(response, VariableConstants.TOKEN_COOKIE_NAME, token, VariableConstants.COOKIE_EXPIRE_SECONDS, request);
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> getProfile(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return ResponseEntity.badRequest().body("Không tìm thấy cookie");
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")) {
+                return ResponseEntity.ok("Giá trị của cookie token là: " + cookie.getValue());
+            }
+        }
+
+        return ResponseEntity.badRequest().body("Không tìm thấy cookie token");
+
+
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> authenticateUser() {
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findByName(Role.ROLE_ADMIN));
-       User user = userRepository.save(User.builder()
+        User user = userRepository.save(User.builder()
                 .accountName("hoang1998")
                 .displayName("Regalite")
                 .phoneNumber("0344550559")

@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
-import static com.regalite.userservice.common.ValueConstants.*;
+import static com.regalite.userservice.common.VariableConstants.*;
 
 /**
  * @author FISES-HoangVH15

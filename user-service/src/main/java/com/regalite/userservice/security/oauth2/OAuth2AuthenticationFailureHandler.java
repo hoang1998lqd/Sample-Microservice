@@ -1,7 +1,7 @@
 package com.regalite.userservice.security.oauth2;
 
 
-import com.regalite.userservice.common.ValueConstants;
+import com.regalite.userservice.common.VariableConstants;
 import com.regalite.userservice.utils.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        String targetUrl = CookieUtils.getCookie(request, ValueConstants.REDIRECT_URI_PARAM_COOKIE_NAME)
+        String targetUrl = CookieUtils.getCookie(request, VariableConstants.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
                 .orElse(("/"));
 
