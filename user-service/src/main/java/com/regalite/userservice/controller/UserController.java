@@ -63,7 +63,6 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> authenticateUser(@RequestBody SignInRequest signInRequest, HttpServletResponse response, HttpServletRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getLogin(), signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
