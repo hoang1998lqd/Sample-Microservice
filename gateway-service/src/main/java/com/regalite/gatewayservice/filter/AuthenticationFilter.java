@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
@@ -13,8 +14,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Autowired
     private RouteValidator validator;
 
-    //    @Autowired
-//    private RestTemplate template;
+        @Autowired
+    private RestTemplate template;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -32,17 +33,23 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
 
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+//                Optional<Cookie> cookie = CookieUtils.getCookie((HttpServletRequest) exchange.getRequest(), "token");
+//                String authHeader = null;
+//                if (cookie.isPresent()){
+//                    authHeader = cookie.get().getValue();
+//                }
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
                     authHeader = authHeader.substring(7);
                 }
                 try {
-//                    //REST call to AUTH service
-//                    template.getForObject("http://IDENTITY-SERVICE//validate?token" + authHeader, String.class);
-                   if (jwtUtil.validateToken(authHeader)){
-                       System.out.println("Success");
-                   }else {
-                       System.out.println("Fail !!!!!!!!!!!!!!");
-                   }
+
+                    //REST call to AUTH service
+                    template.getForObject("http://localhost:8081/api/user/validate?token=" + authHeader, String.class);
+//                   if (jwtUtil.validateToken(authHeader)){
+//                       System.out.println("Success");
+//                   }else {
+//                       System.out.println("Fail !!!!!!!!!!!!!!");
+//                   }
 
                 } catch (Exception e) {
                     System.out.println("invalid access...!");

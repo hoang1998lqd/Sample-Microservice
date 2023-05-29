@@ -86,8 +86,6 @@ public class UserController {
         }
 
         return ResponseEntity.badRequest().body("Không tìm thấy cookie token");
-
-
     }
 
     @PostMapping("/register")
@@ -114,5 +112,11 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    @GetMapping("/validate")
+    public String validateToken(@RequestParam("token") String token) {
+         tokenProvider.validateToken(token);
+         return "Token is valid !!!";
+
+    }
 
 }

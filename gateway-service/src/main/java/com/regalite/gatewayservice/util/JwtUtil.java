@@ -1,11 +1,14 @@
 package com.regalite.gatewayservice.util;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.security.SignatureException;
 
 
 @Component
@@ -23,8 +26,6 @@ public class JwtUtil {
             Jwts.parser()
                     .setSigningKey(SECRET)
                     .parseClaimsJws(token);
-        } catch (SignatureException ex) {
-            System.out.println("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
             System.out.println("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
@@ -38,8 +39,4 @@ public class JwtUtil {
     }
 
 
-    private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
 }
